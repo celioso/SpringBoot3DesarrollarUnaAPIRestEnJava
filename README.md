@@ -100,3 +100,79 @@ Así que aquí están algunos artículos que pueden ayudar en este tema:
 ¿Comenzando esta etapa? Aquí puedes descargar los archivos del proyecto que hemos realizado anteriormente en el aula.
 
 [Descarga los archivos en Github](https://github.com/alura-es-cursos/1952-spring-boot-3-rest-api/tree/clase-1 "Descarga los archivos en Github") o haz clic [aquí](https://github.com/alura-es-cursos/1952-spring-boot-3-rest-api/archive/refs/heads/clase-1.zip "aquí") para descargarlos directamente.
+
+### Para saber más: JSON
+
+JSON (JavaScript Object Notation) es un formato utilizado para representar información, al igual que XML y CSV.
+
+Una API necesita recibir y devolver información en algún formato, que representa los recursos que administra. JSON es uno de estos posibles formatos, habiéndose popularizado por su ligereza, sencillez, facilidad de lectura por personas y máquinas, así como por su soporte para diferentes lenguajes de programación.
+
+Un ejemplo de representación de información en formato XML sería:
+
+```java 
+<producto>
+    <nombre>Mochila</nombre>
+    <precio>89.90</precio>
+    <descripcion>Mochila para notebooks de hasta 17 pulgadas</descripcion>
+</producto>
+```
+La misma información podría representarse en formato JSON de la siguiente manera:
+
+```java 
+{
+    “nombre” : “Mochila”,
+    “precio” : 89.90,
+    “descripcion” : “Mochila para notebooks de hasta 17 pulgadas”
+}
+```
+
+Observe cómo el formato JSON es mucho más compacto y legible. Precisamente por eso, se ha convertido en el formato universal utilizado en la comunicación de aplicaciones, especialmente en el caso de las API REST.
+
+Se pueden encontrar más detalles sobre JSON en el sitio web [JSON.org](https://www.json.org/json-es.html "JSON.org").
+
+### Para saber más: tratando con CORS
+
+Cuando desarrollamos una API y queremos que todos sus recursos estén disponibles para cualquier cliente HTTP, una de las cosas que nos viene a la mente es CORS (Cross-Origin Resource Sharing), en Español, “Intercambio de recursos con diferentes orígenes” Si aún no te ha pasado, no te preocupes, es normal tener errores de CORS al consumir y poner a disposición las APIs.
+
+![console](https://caelum-online-public.s3.amazonaws.com/1952-desarrollar-api-rest-java/imagem1.png "console")
+
+Pero al fin y al cabo, ¿qué es CORS, qué provoca errores y cómo evitarlos en nuestras APIs con Spring Boot?
+
+**CORS**
+
+CORS es un mecanismo utilizado para agregar encabezados HTTP que le indican a los navegadores que permitan que una aplicación web se ejecute en un origen y acceda a los recursos desde un origen diferente. Este tipo de acción se denomina *cross-origin HTTP request*. En la práctica, les dice a los navegadores si se puede acceder o no a un recurso en particular.
+
+Pero, ¿por qué ocurren los errores? ¡Es hora de entender!
+
+**Same-origin policy**
+
+Por defecto, una aplicación Front-end, escrita en JavaScript, solo puede acceder a los recursos ubicados en el mismo origen de la solicitud. Esto sucede debido a la política del mismo origen *(same-origin policy*), que es un mecanismo de seguridad de los navegadores que restringe la forma en que un documento o script de un origen interactúa con los recursos de otro. Esta política tiene como objetivo detener los ataques maliciosos.
+
+Dos URL comparten el mismo origen si el protocolo, el puerto (si se especifica) y el host son los mismos. Comparemos posibles variaciones considerando la URL `https://cursos.alura.com.br/category/programacao:`
+
+![URL](http://cursos.alura.com.br/category/programacao "URL")
+
+Ahora, la pregunta sigue siendo: ¿qué hacer cuando necesitamos consumir una API con una URL diferente sin tener problemas con CORS? Como, por ejemplo, cuando queremos consumir una API que se ejecuta en el puerto 8000 desde una aplicación React que se ejecuta en el puerto 3000. ¡Compruébalo!
+
+Al enviar una solicitud a una API de origen diferente, la API debe devolver un header llamado **Access-Control-Allow-Origin**. Dentro de ella es necesario informar los diferentes orígenes que serán permitidas de consumir la API, en nuestro caso: `Access-Control-Allow-Origin: http://localhost:3000.`
+
+Puede permitir el acceso desde cualquier origen utilizando el símbolo * (asterisco): `Access-Control-Allow-Origin: *`. Pero esta no es una medida recomendada, ya que permite que fuentes desconocidas accedan al servidor, a menos que sea intencional, como en el caso de una API pública. Ahora veamos cómo hacer esto en Spring Boot correctamente.
+
+**Habilitación de diferentes orígenes en Spring Boot**
+
+Para configurar el CORS y permitir que un origen específico consuma la API, simplemente cree una clase de configuración como la siguiente:
+
+```java
+@Configuration
+public class CorsConfiguration implements WebMvcConfigurer {
+
+    @Override
+    public void addCorsMappings(CorsRegistry registry) {
+        registry.addMapping("/**")
+            .allowedOrigins("http://localhost:3000")
+            .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD", "TRACE", "CONNECT");
+    }
+}
+```
+
+[http://localhost:3000](http://localhost:3000/ "http://localhost:3000") sería la dirección de la aplicación Front-end y **.allowedMethods** los métodos que se permitirán ejecutar. Con esto, podrás consumir tu API sin problemas desde una aplicación front-end.
