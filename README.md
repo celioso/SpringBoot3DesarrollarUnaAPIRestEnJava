@@ -176,3 +176,73 @@ public class CorsConfiguration implements WebMvcConfigurer {
 ```
 
 [http://localhost:3000](http://localhost:3000/ "http://localhost:3000") sería la dirección de la aplicación Front-end y **.allowedMethods** los métodos que se permitirán ejecutar. Con esto, podrás consumir tu API sin problemas desde una aplicación front-end.
+
+### Para saber más: Java Record
+
+Lanzado oficialmente en Java 16, pero disponible experimentalmente desde Java 14. **Record** es un recurso que le permite representar una clase inmutable, que contiene solo atributos, constructor y métodos de lectura, de una manera muy simple y ágil.
+
+Este tipo de clase encaja perfectamente para representar clases DTO, ya que su objetivo es únicamente representar datos que serán recibidos o devueltos por la API, sin ningún tipo de comportamiento.
+
+Para crear una clase DTO inmutable, sin la utilización de Record, era necesario escribir mucho código. Veamos un ejemplo de una clase DTO que representa un teléfono:
+
+```java
+public final class Telefono {
+
+    private final String ddd;
+    private final String numero;
+
+    public Telefono(String ddd, String numero) {
+        this.ddd = ddd;
+        this.numero = numero;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(ddd, numero);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        } else if (!(obj instanceof Telefono)) {
+            return false;
+        } else {
+            Telefono other = (Telefono) obj;
+            return Objects.equals(ddd, other.ddd)
+              && Objects.equals(numero, other.numero);
+        }
+    }
+
+    public String getDdd() {
+        return this.ddd;
+    }
+
+    public String getNumero() {
+        return this.numero;
+    }
+}
+```
+
+Ahora, con Record todo ese código se puede resumir en una sola línea:
+
+```java
+public record Telefono(String ddd, String numero){}
+```
+
+Mucho más simple, ¿no?
+
+Bajo el capó, Java transformará este registro en una clase inmutable, muy similar al código que se muestra arriba.
+
+Se pueden encontrar más detalles sobre esta función en la [documentación oficial](https://docs.oracle.com/en/java/javase/16/language/records.html "documentación oficial").
+
+### Lo que aprendimos
+
+**En esta clase, aprendiste a:**
+- Mapear solicitudes POST en una clase Controller;
+- Enviar solicitudes POST a la API usando Insomnia;
+- Enviar datos a la API en formato JSON;
+- Utilizar la anotación `@RequestBody` para recibir datos del cuerpo de la solicitud en un parámetro en el Controller;
+- Use el padrón **DTO (Data Transfer Object)**, a través de Java Records, para representar los datos recibidos en una solicitud POST.
+ DISCUTIR EN EL FORO
+PRÓXIMA ACTIVIDAD
