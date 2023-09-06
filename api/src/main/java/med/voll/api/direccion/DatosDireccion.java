@@ -11,7 +11,7 @@ public record DatosDireccion(
         @NotBlank
         String ciudad,
         @NotBlank
-        int numero,
+        String numero,
         @NotBlank
         String complemento) {
 }

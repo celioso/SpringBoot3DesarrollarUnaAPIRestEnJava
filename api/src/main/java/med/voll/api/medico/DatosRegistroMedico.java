@@ -17,8 +17,8 @@ public record DatosRegistroMedico(
         @NotBlank
         String telefono,
         @NotBlank
-        @Pattern(regexp = "\\d{4,10}")
-        int documento,
+        @Pattern(regexp = "\\d{4,6}")
+        String documento,
         @NotNull
         Especialidad especialidad,
         @NotNull

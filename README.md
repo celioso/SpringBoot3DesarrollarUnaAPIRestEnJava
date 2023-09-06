@@ -424,3 +424,30 @@ Esta anotación se permite con la ayuda de la anotación @SpringBootApplication,
 Al marcar un componente con la anotación @Autowired le estamos diciendo a Spring que el componente es un punto donde se debe inyectar una dependencia, en otras palabras, el componente se inyecta en la clase que lo posee, estableciendo una colaboración entre componentes.
 
 Para más información sobre la anotación, echa un vistazo a la documentación oficial: [https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/beans/factory/annotation/Autowired.html](https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/beans/factory/annotation/Autowired.html "https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/beans/factory/annotation/Autowired.html")
+
+### solucion de flyway cunado no migra
+
+Parece que el problema está relacionado con la migración de Flyway que intentaste realizar. El error indica que la migración a la versión 2 (alter-table-medicos-add-telefono) ha fallado.
+
+Flyway es muy estricto con las migraciones y si una migración falla, todas las migraciones posteriores también fallarán hasta que se resuelva el problema. En tu caso, parece que la migración a la versión 2 ha fallado, por lo que Flyway no permitirá que se realicen más migraciones hasta que se resuelva este problema.
+
+Para solucionar este problema, intenta seguir estos pasos:
+
+1. Primero, debes eliminar cualquier cambio a medio hacer que se haya producido como resultado de la migración fallida. Esto puede implicar eliminar manualmente cualquier cambio en la base de datos que se haya producido como resultado de la migración fallida.
+
+2. A continuación, debes ejecutar el comando 'repair' de Flyway. Este comando corregirá el historial de esquemas de Flyway al marcar la migración fallida como resuelta. En Spring Boot, puedes hacer esto a través de la línea de comandos con `./mvnw spring-boot:run -Dspring-boot.run.arguments=--spring.flyway.repair` este comando lo debe usar desde la carpeta de la app.
+
+3. Finalmente, debes volver a ejecutar la migración. Asegúrate de que el script de migración esté correcto y no cause errores. En tu caso, el script de migración sería el archivo V2__alter-table-medicos-add-telefono.sql.
+
+Un ejemplo de cómo podría ser tu script de migración es:
+`ALTER TABLE medicos ADD telefono VARCHAR(255);`
+
+
+### Lo que aprendimos
+
+En esta clase, aprendiste a:
+ 
+- Agregar nuevas dependencias en el proyecto;
+- Asignar una entidad JPA y crear una interfaz de Repositorio para ella;
+- Utilizar Flyway como herramienta de migración de proyectos;
+- Realice validaciones con Bean Validation usando algunas de sus anotaciones, como `@NotBlank.`
