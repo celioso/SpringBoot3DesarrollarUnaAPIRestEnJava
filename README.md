@@ -442,6 +442,26 @@ Para solucionar este problema, intenta seguir estos pasos:
 Un ejemplo de cómo podría ser tu script de migración es:
 `ALTER TABLE medicos ADD telefono VARCHAR(255);`
 
+Tuve un problema similar, lo que hice (en caso de que no o hallas solucionado aun) fue escribir en MySQL la siguiente query "`delete from flyway_schema_history where success = 0;`"
+
+````java
+package med.voll.api;
+
+import org.flywaydb.core.Flyway;
+
+public class flywayRepair {
+    public static void main(String[] args) {
+        // Configura la instancia de Flyway con la configuración de tu base de datos, usuario y contraseña
+        Flyway flyway = Flyway.configure()
+                .dataSource("jdbc:mysql://localhost:3306/tu_base_de_datos", "tu_usuario", "tu_contraseña")
+                .load();
+
+        // Ejecuta la reparación de Flyway
+        flyway.repair();
+
+    }
+}
+``
 
 ### Lo que aprendimos
 
@@ -451,3 +471,9 @@ En esta clase, aprendiste a:
 - Asignar una entidad JPA y crear una interfaz de Repositorio para ella;
 - Utilizar Flyway como herramienta de migración de proyectos;
 - Realice validaciones con Bean Validation usando algunas de sus anotaciones, como `@NotBlank.`
+
+### Proyecto del aula anterior
+
+¿Comenzando esta etapa? Aquí puedes descargar los archivos del proyecto que hemos realizado anteriormente en el aula.
+
+[Descarga los archivos en Github](https://github.com/alura-es-cursos/1952-spring-boot-3-rest-api/tree/clase-3 "Descarga los archivos en Github") o haz clic [aquí](https://github.com/alura-es-cursos/1952-spring-boot-3-rest-api/archive/refs/heads/clase-3.zip "aquí") para descargarlos directamente.
