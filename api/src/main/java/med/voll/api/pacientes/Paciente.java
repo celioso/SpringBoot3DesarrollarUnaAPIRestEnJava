@@ -5,14 +5,14 @@ import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import med.voll.api.direccion.Direccion;
+import med.voll.api.direccion.DireccionP;
 
 @Getter
 @EqualsAndHashCode(of = "id")
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity(name = "Paciente")
-@Table(name = "paciente")
+@Entity(name = "Pacientes")
+@Table(name = "pacientes")
 public class Paciente {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,20 +21,20 @@ public class Paciente {
     private String nombre;
     private String email;
     private String telefono;
-    private String documentoIdentidad;
+    private String documento;
     private String seguro;  //SANITAS,NUEVAEPS,COLSANITAS,COOMEVA
 
 
     @Embedded
-    private Direccion direccion;
+    private DireccionP direccionP;
 
     public Paciente(DatosRegistroPaciente datos) {
         this.nombre = datos.nombre();
         this.email = datos.email();
         this.telefono = datos.telefono();
-        this.documentoIdentidad = datos.documentoIdentidad();
+        this.documento = datos.documento();
         this.seguro = String.valueOf(datos.seguro());
-        this.direccion = new Direccion(datos.direccion());
+        this.direccionP = new DireccionP(datos.direccionP());
     }
 
 }
