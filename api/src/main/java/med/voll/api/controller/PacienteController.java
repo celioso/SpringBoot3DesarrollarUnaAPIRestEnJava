@@ -2,6 +2,8 @@ package med.voll.api.controller;
 
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
+import med.voll.api.medico.DatosListadoMedico;
+import med.voll.api.pacientes.DatosListadoPaciente;
 import med.voll.api.pacientes.DatosRegistroPaciente;
 import med.voll.api.pacientes.Paciente;
 import med.voll.api.pacientes.PacienteRepository;
@@ -25,8 +27,8 @@ public class PacienteController {
 
         //muestra los pacientes
         @GetMapping
-        public List<Paciente> listadoMedicos(){
-            return pacienteRepository.findAll();
+        public List<DatosListadoPaciente> listadoMedicos(){
+                return pacienteRepository.findAll().stream().map(DatosListadoPaciente::new).toList();
         }
 }
 

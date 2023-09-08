@@ -444,7 +444,7 @@ Un ejemplo de cómo podría ser tu script de migración es:
 
 Tuve un problema similar, lo que hice (en caso de que no o hallas solucionado aun) fue escribir en MySQL la siguiente query "`delete from flyway_schema_history where success = 0;`"
 
-````java
+```java
 package med.voll.api;
 
 import org.flywaydb.core.Flyway;
