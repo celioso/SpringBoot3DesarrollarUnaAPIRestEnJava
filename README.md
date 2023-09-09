@@ -654,3 +654,79 @@ spring.jpa.properties.hibernate.format_sql=true
 ¿Comenzando esta etapa? Aquí puedes descargar los archivos del proyecto que hemos realizado anteriormente en el aula.
 
 [Descarga los archivos en Github](https://github.com/alura-es-cursos/1952-spring-boot-3-rest-api/tree/clase-4 "Descarga los archivos en Github") o haz clic [aquí](https://github.com/alura-es-cursos/1952-spring-boot-3-rest-api/archive/refs/heads/clase-4.zip "aquí") para descargarlos directamente.
+
+### Para saber más: Mass Assignment Attack
+
+**Mass Assignment Attack** o Ataque de asignación masiva, en español, ocurre cuando un usuario logra inicializar o reemplazar parámetros que no deben ser modificados en la aplicación. Al incluir parámetros adicionales en una solicitud, si dichos parámetros son válidos, un usuario malintencionado puede generar un efecto secundario no deseado en la aplicación.
+
+El concepto de este ataque se refiere a cuando inyectas un conjunto de valores directamente en un objeto, de ahí la asignación masiva de nombres, que sin la debida validación puede causar serios problemas.
+
+Tomemos un ejemplo práctico. Suponga que tiene el siguiente método, en una clase Controller, utilizado para registrar un usuario en la aplicación:
+
+```java
+@PostMapping
+@Transactional
+public void registrar(@RequestBody @Valid Usuario usuario) {
+    repository.save(usuario);
+}
+```
+
+Y la entidad JPA que representa al usuario:
+
+```java
+@Getter
+@Setter
+@NoArgsConstructor
+@EqualsAndHashCode(of = "id")
+@Entity(name = "Usuario")
+@Table(name = "usuarios")
+public class Usuario {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    private String nombre;
+    private String email;
+    private Boolean admin = false;
+
+    //restante del código omitido…
+}
+```
+
+Observe que el atributo `admin` de la clase `Usuario` se inicializa como `falso`, lo que indica que un usuario siempre debe estar registrado como administrador. Sin embargo, si se envía el siguiente JSON en la solicitud:
+
+```java
+{
+    “nombre” : “Rodrigo”,
+    “email” : “rodrigo@email.com”,
+    “admin” : true
+}
+```
+
+El usuario se registrará con el atributo `admin` con valor `true`. Esto sucede porque el atributo `admin` enviado en el JSON existe en la clase que se está recibiendo en el Controller, considerándose un atributo válido y que se llenará en el objeto `Usuario` que será instanciado por Spring.
+
+Entonces, ¿cómo prevenimos este problema?
+
+**Prevención**
+
+El uso del patrón DTO nos ayuda a evitar este problema, ya que al crear un DTO definimos solo los campos que se pueden recibir en la API, y en el ejemplo anterior el DTO no tendría el atributo `admin`.
+
+Nuevamente, vemos una ventaja más de usar el patrón DTO para representar los datos que entran y salen de la API.
+
+### Para saber más: ¿PUT o PATCH?
+
+Elegir entre el método HTTP PUT o PATCH es una pregunta común que surge cuando estamos desarrollando APIs y necesitamos crear un endpoint para la actualización de recursos. Comprendamos las diferencias entre las dos opciones y cuándo usar cada una.
+
+**PUT**
+
+El método PUT reemplaza todos los datos actuales de un recurso con los datos enviados en la solicitud, es decir, estamos hablando de una actualización completa. Entonces, con él, hacemos la actualización completa de un recurso en una sola solicitud.
+
+**PATCH**
+
+El método PATCH, a su vez, aplica modificaciones parciales a un recurso. Por lo tanto, es posible modificar solo una parte de un recurso. Con PATCH, entonces, realizamos actualizaciones parciales, lo que flexibiliza las opciones de actualización.
+
+**¿Cuál elegir?**
+
+En la práctica, es difícil saber qué método usar, porque no siempre sabremos si un recurso se actualizará parcial o completamente en una solicitud, a menos que lo verifiquemos, algo que no se recomienda.
+
+Entonces, lo más común en las aplicaciones es usar el método PUT para las solicitudes de actualización de recursos en una API, que es nuestra elección en el proyecto utilizado a lo largo de este curso.
