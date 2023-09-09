@@ -27,6 +27,16 @@ public class DireccionP {
         this.numero = direccionP.numero();
         this.provincia = direccionP.provincia();
         this.ciudad = direccionP.ciudad();
+    }
 
+    public DireccionP actualizarDatos(DatosDireccionP direccionP) {
+        this.urbanizacion = direccionP.urbanizacion();
+        this.distrito = direccionP.distrito();
+        this.codigoPostal = direccionP.codigo_postal();
+        this.complemento = direccionP.complemento();
+        this.numero = direccionP.numero();
+        this.provincia = direccionP.provincia();
+        this.ciudad = direccionP.ciudad();
+        return this;
     }
 }
