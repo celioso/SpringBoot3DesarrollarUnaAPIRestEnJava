@@ -730,3 +730,98 @@ El método PATCH, a su vez, aplica modificaciones parciales a un recurso. Por lo
 En la práctica, es difícil saber qué método usar, porque no siempre sabremos si un recurso se actualizará parcial o completamente en una solicitud, a menos que lo verifiquemos, algo que no se recomienda.
 
 Entonces, lo más común en las aplicaciones es usar el método PUT para las solicitudes de actualización de recursos en una API, que es nuestra elección en el proyecto utilizado a lo largo de este curso.
+
+### Haga lo que hicimos en el aula: actualizar y eliminar
+
+
+¡Ahora está contigo! Haga el mismo procedimiento que hice en clase, para las funcionalidades de actualización y eliminación de pacientes.
+
+Deberá agregar nuevos métodos en el Controller del paciente:
+
+```java
+@PutMapping
+@Transactional
+public void atualizar(@RequestBody @Valid DatosActualizacionPaciente datos) {
+    var paciente = repository.getReferenceById(datos.id());
+    paciente.atualizarInformacion(datos);
+}
+
+@DeleteMapping("/{id}")
+@Transactional
+public void remover(@PathVariable Long id) {
+    var paciente = repository.getReferenceById(id);
+    paciente.inactivar();
+}
+```
+
+También deberá crear un atributo y nuevos métodos en la entidad `Paciente`, además de modificar su constructor:
+
+```java
+private Boolean activo;
+
+public Paciente(DatosRegistroPaciente datos) {
+    this.activo = true;
+    this.nombre = datos.nombre();
+    this.email = datos.email();
+    this.telefono = datos.telefono();
+    this.documentoIdentidad = datos.documentoIdentidad();
+    this.direccion = new Direccion(datos.direccion());
+}
+
+public void atualizarInformacion(DatosActualizacionPaciente datos) {
+    if (datos.nombre() != null)
+        this.nombre = datos.nombre();
+
+    if (datos.telefono() != null)
+        this.telefono = datos.telefono();
+
+    if (datos.direccion() != null)
+        direccion.atualizarInformacion(datos.direccion());
+}
+
+public void inactivar() {
+    this.activo = false;
+}
+```
+Na sequência, será necessário criar o DTO `DatosActualizacionPaciente` e modificar o `DatosListaPaciente`:
+
+```java
+public record DatosActualizacionMedico(
+    Long id,
+    String nombre,
+    String telefono,
+    @Valid DatosActualizacionDireccion direccion
+) {
+}
+```
+
+```java
+public record DatosListaPaciente(Long id, String nombre, String email, String documentoIdentidad) {
+    public DatosListaPaciente(Paciente paciente) {
+        this(paciente.getId(), paciente.getNombre(), paciente.getEmail(), paciente.getDocumentoIdentidad());
+    }
+}
+```
+
+Y finalmente, deberá crear una migración (¡**Atencion!** ¡Recuerde detener el proyecto antes de crear la migración!):
+
+```java
+alter table pacientes add column activo tinyint;
+update pacientes set activo = 1;
+alter table pacientes modify activo tinyint not null;
+```
+
+### Lo que aprendimos
+
+### En esta clase, aprendiste a:
+- Mapear solicitudes PUT con la anotación `@PutMapping`;
+- Escribir un código para actualizar la información de un registro en la base de datos;
+- Mapear solicitudes DELETE con la anotación `@DeleteMapping`;
+- Mapear parámetros dinámicos en la URL con la anotación `@PathVariable`;
+Implementar el concepto de exclusión lógica utilizando un atributo booleano.
+
+### Proyecto final
+
+Aquí puedes descargar los archivos del proyecto completo.
+
+[Descarga los archivos en Github](Aquí puedes descargar los archivos del proyecto completo.  Descarga los archivos en Github o haz clic aquí para descargarlos directamente. "Descarga los archivos en Github") o haz clic [aquí](https://github.com/alura-es-cursos/1952-spring-boot-3-rest-api/archive/refs/heads/clase-5.zip "aquí") para descargarlos directamente.
